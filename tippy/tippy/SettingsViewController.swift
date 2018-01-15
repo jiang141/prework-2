@@ -23,6 +23,8 @@ class SettingsViewController: UIViewController {
         defaults.set(tip1Int, forKey: "tip1")
         defaults.set(tip2Int, forKey: "tip2")
         defaults.set(tip3Int, forKey: "tip3")
+        
+        defaults.synchronize()
     }
     
     override func viewWillAppear(_ animated: Bool) {

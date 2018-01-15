@@ -10,12 +10,16 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var lightBlue: UIView!
     @IBOutlet weak var billField: UITextField!
     @IBOutlet weak var totalLabel: UILabel!
     @IBOutlet weak var tipLabel: UILabel!
     @IBOutlet weak var tipControl: UISegmentedControl!
     
     override func viewDidLoad() {
+        
+        billField.becomeFirstResponder()
+
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         self.title = "Tip Calculator"
@@ -23,6 +27,7 @@ class ViewController: UIViewController {
         defaults.set(15, forKey: "tip1")
         defaults.set(20, forKey: "tip2")
         defaults.set(30, forKey: "tip3")
+        defaults.synchronize()
     }
 
     override func didReceiveMemoryWarning() {
@@ -31,6 +36,8 @@ class ViewController: UIViewController {
     }
 
     @IBAction func calculateTip(_ sender: Any) {
+        billField.text = billField.text!.replacingOccurrences(of: "$", with: "")
+
         let defaults = UserDefaults.standard
         
         let tip1: Double = defaults.double(forKey: "tip1")
@@ -42,7 +49,7 @@ class ViewController: UIViewController {
         let tip3Double = tip3/100
 
         let tipPercentages = [tip1Double,tip2Double,tip3Double]
-        
+
         let bill = Double(billField.text!) ?? 0
         let tip = bill * tipPercentages[tipControl.selectedSegmentIndex]
         print(tipControl.selectedSegmentIndex)
@@ -50,13 +57,14 @@ class ViewController: UIViewController {
         
         tipLabel.text = String(format: "$%.2f", tip)
         totalLabel.text = String(format: "$%.2f", total)
+        
+        billField.text = "$" + billField.text!
     }
 
     
     
     
     @IBAction func onTap(_ sender: Any) {
-        view.endEditing(true)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -64,6 +72,7 @@ class ViewController: UIViewController {
         print("view will disappear")
     }
     override func viewWillAppear(_ animated: Bool) {
+        billField.becomeFirstResponder()
         let defaults = UserDefaults.standard
         let tip1: Int = defaults.integer(forKey: "tip1")
         let tip2: Int = defaults.integer(forKey: "tip2")
@@ -77,7 +86,7 @@ class ViewController: UIViewController {
         tipControl.setTitle(tip1Text, forSegmentAt:0)
         tipControl.setTitle(tip2Text, forSegmentAt:1)
         tipControl.setTitle(tip3Text, forSegmentAt:2)
-
+        calculateTip(true)
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.tintAdjustmentMode = .normal
         self.navigationController?.navigationBar.tintAdjustmentMode = .automatic
